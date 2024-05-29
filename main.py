@@ -13,23 +13,24 @@ def run():
     dev_mode = input_management.decide_dev_mode()
     print("")
     # PLAYER NAME: Player's username for displaying their messages
-    name = input_management.get_save_name()
+    save_name = input_management.get_save_name()
     print("")
     # CONTEXT: User's specifications for RPG game set-up
-    context = input_management.get_game_context()
-    print("")
+    if not file_management.does_save_already_exist(save_name):
+        context = input_management.get_game_context()
+        print("")
+        # Creates a file with all the user's info
+        file_management.organize_file(save_name, context)
 
-    # Creates a file with all the user's info
-    file_management.organize_file(name, context)
-
-    print('------------------------\n')
+        print(f"------ CREATING NEW SAVE '{save_name}' ------\n")
+    else: print(f"------ OPENING EXISTING SAVE '{save_name}' ------\n")
 
     while True:
         try:
-            bot_response = input_management.give_choice_get_response(gpt_model)
+            bot_response = input_management.give_choice_get_response(save_name, gpt_model)
             _deliver_response(bot_response, dev_mode)
         except KeyboardInterrupt:
-            print("\n-=+=-\nGame exited, save interrupted. Latest save may be minimally corrupted.\n-=+=-")
+            print(f"\n-=+=-\nGame exited, program interrupted. Save for '{save_name}' may be corrupted.\n-=+=-")
             break
 
 

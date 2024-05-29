@@ -9,11 +9,21 @@ def organize_file(save_file: str, player_choices: str) -> None:
     _organize_player_data(save_file, player_choices)
 
 
-def remember_response(response: str, response_type: str) -> None:
+def does_save_already_exist(save_file: str):
+    with open('info_file.json', 'r') as file:
+        try:
+            formatted_file = json.load(file)
+            return save_file in formatted_file
+        except json.decoder.JSONDecodeError:
+            return False
+
+def remember_response(save_name: str, response: str, response_type: str) -> None:
     with open('info_file.json', 'r+') as file:
         formatted_file = json.load(file)
 
-        formatted_file['history'][f'{response_type}_responses'].append(response)
+        if "history" not in formatted_file[save_name]:
+            formatted_file[save_name]['history'] = { "player_responses": [], "bot_responses": [] }
+        formatted_file[save_name]['history'][f'{response_type}_responses'].append(response)
 
         # go to the beginning of file
         file.seek(0)
@@ -21,9 +31,9 @@ def remember_response(response: str, response_type: str) -> None:
         file.truncate()
 
 
-def get_history() -> list:
-    formatted_choices = _format_history('player')
-    formatted_responses = _format_history('bot')
+def get_history(save_name: str) -> list:
+    formatted_choices = _format_history(save_name, 'player')
+    formatted_responses = _format_history(save_name, 'bot')
 
     formatted_history = [item for pair in zip(formatted_choices, formatted_responses) for item in pair]
     formatted_history.append(formatted_choices[-1])
@@ -37,8 +47,8 @@ def _get_constant_and_control() -> list:
 
     with open('info_file.json', 'r') as file:
         formatted_file = json.load(file)
-        constant = {"role": "system", "content": formatted_file['constant']}
-        control = {"role": "system", "content": formatted_file['control']}
+        constant = {"role": "system", "content": formatted_file['LAW']}
+        control = {"role": "system", "content": formatted_file['LAW']}
 
         formatted_constant_and_control.append(constant)
         formatted_constant_and_control.append(control)
@@ -47,16 +57,18 @@ def _get_constant_and_control() -> list:
 
 
 def _base_formatting() -> None:
-    with open('info_file.json', 'w') as file:
-        file.write(open('info_save.json', 'r').read())
-
+    with open('info_file.json', 'r+') as file:
+        if file.read() == "":
+            json.dump({
+                "LAW": "You are a roleplay game bot. Player's words are character's actions/thoughts. 'Quoted' text is character speech, asterisked actions. Consider past choices, environment, and available resources. Keep responses very short, ALWAYS within ONE or TWO sentences at all times. Never list off choices. Only answer questions with bare minimum. No 'What would you like to do?' prompt. Never, ever control the player's character or tell them what to do.",
+            }, file)
 
 def _organize_player_data(save_file: str, player_choices: str) -> None:
     with open('info_file.json', 'r+') as file:
         formatted_file = json.load(file)
 
-        formatted_file['save_file'] = save_file
-        formatted_file['control'] = player_choices
+        formatted_file[save_file] = { }
+        formatted_file[save_file]["control"] = player_choices
 
         # go to the beginning of file
         file.seek(0)
@@ -64,7 +76,7 @@ def _organize_player_data(save_file: str, player_choices: str) -> None:
         file.truncate()
 
 
-def _format_history(response_type: str) -> list:
+def _format_history(save_name: str, response_type: str) -> list:
     role = "user"
     formatted_history = []
 
@@ -73,7 +85,7 @@ def _format_history(response_type: str) -> list:
 
     with open('info_file.json', 'r') as file:
         formatted_file = json.load(file)
-        responses = formatted_file['history'][f'{response_type}_responses']
+        responses = formatted_file[save_name]['history'][f'{response_type}_responses']
 
     for response in responses:
         formatted_history.append({"role": role, "content": response})
