@@ -13,7 +13,7 @@ def run():
     dev_mode = input_management.decide_dev_mode()
     print("")
     # PLAYER NAME: Player's username for displaying their messages
-    name = input_management.get_player_name()
+    name = input_management.get_save_name()
     print("")
     # CONTEXT: User's specifications for RPG game set-up
     context = input_management.get_game_context()
@@ -25,8 +25,13 @@ def run():
     print('------------------------\n')
 
     while True:
-        bot_response = input_management.give_choice_get_response(gpt_model)
-        _deliver_response(bot_response, dev_mode)
+        try:
+            bot_response = input_management.give_choice_get_response(gpt_model)
+            _deliver_response(bot_response, dev_mode)
+        except KeyboardInterrupt:
+            print("\n-=+=-\nGame exited, save interrupted. Latest save may be minimally corrupted.\n-=+=-")
+            break
+
 
 
 def _deliver_response(response: tuple, dev_mode: bool) -> None:

@@ -31,8 +31,8 @@ def get_ai_model() -> str:
     return model_choice
 
 
-def get_player_name() -> str:
-    print("Enter username.")
+def get_save_name() -> str:
+    print("Enter save name.")
     return input(" >>> ")
 
 
@@ -78,4 +78,4 @@ def decide_dev_mode() -> bool:
 
 
 def _get_choice() -> str:
-    return input(f"{file_management.get_name()}: ")
+    return input(f"You: ")

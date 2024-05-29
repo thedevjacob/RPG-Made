@@ -1,12 +1,12 @@
 import json
 
 
-def organize_file(player_name: str, player_choices: str) -> None:
+def organize_file(save_file: str, player_choices: str) -> None:
     # create the base file format
     _base_formatting()
 
     # organize with the player choices
-    _organize_player_data(player_name, player_choices)
+    _organize_player_data(save_file, player_choices)
 
 
 def remember_response(response: str, response_type: str) -> None:
@@ -19,14 +19,6 @@ def remember_response(response: str, response_type: str) -> None:
         file.seek(0)
         json.dump(formatted_file, file, indent=4)
         file.truncate()
-
-
-def get_name() -> str:
-    with open('info_file.json', 'r') as file:
-        formatted_file = json.load(file)
-        name = formatted_file['player_name']
-
-    return name
 
 
 def get_history() -> list:
@@ -59,11 +51,11 @@ def _base_formatting() -> None:
         file.write(open('info_save.json', 'r').read())
 
 
-def _organize_player_data(player_name: str, player_choices: str) -> None:
+def _organize_player_data(save_file: str, player_choices: str) -> None:
     with open('info_file.json', 'r+') as file:
         formatted_file = json.load(file)
 
-        formatted_file['player_name'] = player_name
+        formatted_file['save_file'] = save_file
         formatted_file['control'] = player_choices
 
         # go to the beginning of file
