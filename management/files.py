@@ -100,11 +100,11 @@ def _format_history(save_name: str, response_type: str) -> list:
 
 def _ensure_file_exists() -> None:
     try:
-        file = open(SAVE_PATH, 'x')
+        file = open(SAVE_PATH, 'x', encoding='utf-8')
         formatted_law = {
             'LAW' : LAW
         }
-        json.dump(formatted_law, file)
+        json.dump(formatted_law, file, ensure_ascii=False, indent=4)
         file.close()
     except FileExistsError:
         pass
