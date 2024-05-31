@@ -1,5 +1,5 @@
 import openai
-import file_management
+from management.files import get_history, remember_response
 
 
 def get_bot_response(save_name: str, player_choice: str, ai_model: str) -> tuple:
@@ -10,7 +10,7 @@ def get_bot_response(save_name: str, player_choice: str, ai_model: str) -> tuple
 
     response = ai_bot.chat.completions.create(
         model=ai_model,
-        messages=file_management.get_history(save_name)
+        messages= get_history(save_name)
     )
 
     # store the bot response in history
@@ -23,9 +23,9 @@ def get_bot_response(save_name: str, player_choice: str, ai_model: str) -> tuple
 
 def _store_player_choice(save_name: str, player_choice: str) -> None:
     # store the player response in history
-    file_management.remember_response(save_name, player_choice, 'player')
+    remember_response(save_name, player_choice, 'player')
 
 
 def _store_bot_response(save_name: str, bot_response: str) -> None:
     # store the bot response in history
-    file_management.remember_response(save_name, bot_response, 'bot')
+    remember_response(save_name, bot_response, 'bot')

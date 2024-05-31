@@ -1,5 +1,5 @@
-import file_management
-import ai_management
+from management import ai_api
+
 
 CONTEXT_STOP_WORD = 'DONE'
 AI_MODEL_GPT_3 = 'gpt-3.5-turbo'
@@ -63,7 +63,7 @@ def give_choice_get_response(save_name: str, ai_model: str) -> tuple:
     # get player choice
     player_choice = _get_choice()
     # get bot response
-    bot_response = ai_management.get_bot_response(save_name, player_choice, ai_model)
+    bot_response = ai_api.get_bot_response(save_name, player_choice, ai_model)
 
     return bot_response
 
