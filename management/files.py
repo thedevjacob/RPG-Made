@@ -8,12 +8,12 @@ SAVE_PATH = SAVE_FILE_DIR / SAVE_FILE_NAME
 LAW = "You are a roleplay game bot. Player's words are character's actions/thoughts. 'Quoted' text is character speech, asterisked actions. Consider past choices, environment, and available resources. Keep responses very short, ALWAYS within ONE or TWO sentences at all times. Never list off choices. Only answer questions with bare minimum. No 'What would you like to do?' prompt. Never, ever control the player's character or tell them what to do."
 
 
-def organize_file(save_file: str, player_choices: str) -> None:
+def organize_file(save_file: str, player_choices: str, ai_model: str) -> None:
     # create the base file format
     _base_formatting()
 
     # organize with the player choices
-    _organize_player_data(save_file, player_choices)
+    _organize_player_data(save_file, player_choices, ai_model)
 
 
 def does_save_already_exist(save_file: str):
@@ -48,6 +48,23 @@ def get_history(save_name: str) -> list:
     return formatted_history
 
 
+def increment_tokens(save_name: str, num_tokens: str) -> None:
+    with open(SAVE_PATH, 'r+') as file:
+        formatted_file = json.load(file)
+        formatted_file[save_name]['total_tokens_used'] += int(num_tokens)
+
+        # go to the beginning of file
+        file.seek(0)
+        json.dump(formatted_file, file, indent = 4)
+        file.truncate()
+
+
+def get_existing_ai_model(save_name: str) -> str:
+    with open(SAVE_PATH, 'r') as file:
+        formatted_file = json.load(file)
+        return formatted_file[save_name]['ai_model']
+
+
 def _get_constant_and_control() -> list:
     formatted_constant_and_control = []
 
@@ -69,12 +86,14 @@ def _base_formatting() -> None:
                 "LAW": "You are a roleplay game bot. Player's words are character's actions/thoughts. 'Quoted' text is character speech, asterisked actions. Consider past choices, environment, and available resources. Keep responses very short, ALWAYS within ONE or TWO sentences at all times. Never list off choices. Only answer questions with bare minimum. No 'What would you like to do?' prompt. Never, ever control the player's character or tell them what to do.",
             }, file)
 
-def _organize_player_data(save_file: str, player_choices: str) -> None:
+def _organize_player_data(save_file: str, player_choices: str, ai_model: str) -> None:
     with open(SAVE_PATH, 'r+') as file:
         formatted_file = json.load(file)
 
         formatted_file[save_file] = { }
-        formatted_file[save_file]["control"] = player_choices
+        formatted_file[save_file]['control'] = player_choices
+        formatted_file[save_file]['ai_model'] = ai_model
+        formatted_file[save_file]['total_tokens_used'] = 0
 
         # go to the beginning of file
         file.seek(0)

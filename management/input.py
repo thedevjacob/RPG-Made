@@ -6,28 +6,23 @@ AI_MODEL_GPT_3 = 'gpt-3.5-turbo'
 AI_MODEL_GPT_4 = 'gpt-4'
 
 
-def get_ai_model() -> str:
-    model_choice = None
-
+def get_ai_model_choice(ai_models: list[str]) -> str:
     while True:
-        ai_gpt_3_keywords = ["3", "gpt3", "1", "gpt3.5", "3.5turbo", "gpt3.5turbo"]
-        ai_gpt_4_keywords = ["4", "gpt4", "2"]
-
         print("Enter AI model.")
-        print("  1) GPT 3.5 Turbo\n  2) GPT 4\n")
 
-        ai_choice = input(" >>> ").lower()
-        ai_choice = ai_choice.replace(" ", "").replace("-", "").replace(")", "").replace(".5", "").lower()
+        for i in range(len(ai_models)):
+            print(f"  {i+1}) {ai_models[i]}")
+        ai_choice = input(" >>> ").strip()
 
-        if ai_choice in ai_gpt_3_keywords:
-            model_choice = AI_MODEL_GPT_3
-        elif ai_choice in ai_gpt_4_keywords:
-            model_choice = AI_MODEL_GPT_4
-        else:
+        try:
+            ai_choice = int(ai_choice)
+            if len(ai_models) > ai_choice >= 0:
+                model_choice = ai_models[ai_choice-1]
+                print("Selected", model_choice, "\b.")
+                break
+        except ValueError:
             print("INVALID MODEL.")
-            continue
-        break
-    print("Selected", model_choice, "\b.")
+
     return model_choice
 
 
