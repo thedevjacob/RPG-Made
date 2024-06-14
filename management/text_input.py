@@ -6,7 +6,7 @@ AI_MODEL_GPT_3 = 'gpt-3.5-turbo'
 AI_MODEL_GPT_4 = 'gpt-4'
 
 
-def get_ai_model_choice(ai_models: list[str]) -> str:
+def get_ai_model_choice(ai_models: tuple[str]) -> str:
     while True:
         print("Enter AI model.")
 
@@ -46,7 +46,7 @@ def get_game_context() -> str:
         line += 1
         context_line = input(f"CONTEXT LINE {line} >>> ")
 
-        if context_line.strip().upper() != CONTEXT_STOP_WORD:
+        if context_line.strip().strip('.').upper() != CONTEXT_STOP_WORD:
             context += context_line.strip() + ' '
         else:
             line = -1

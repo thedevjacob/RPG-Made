@@ -2,6 +2,7 @@ import openai
 from management.files import get_history, remember_response
 
 MAX_TOKENS = 100
+GENERIC_AI_MODEL = 'gpt-3.5-turbo'
 
 
 def get_bot_response(save_name: str, player_choice: str, ai_model: str) -> tuple:
@@ -24,9 +25,9 @@ def get_bot_response(save_name: str, player_choice: str, ai_model: str) -> tuple
     return bot_response, tokens_used
 
 
-def get_all_ai_models() -> list:
+def get_all_ai_models() -> tuple:
     all_models = openai.OpenAI().models.list()
-    all_models = [model.id for model in all_models.data if 'gpt' in model.id]
+    all_models = tuple(model.id for model in all_models.data if 'gpt' in model.id)
     return all_models
 
 
